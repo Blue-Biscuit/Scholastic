@@ -2,6 +2,7 @@
 import proposition
 import question
 import json
+import random
 
 DATA_FILE_NAME = 'user_data.json'
 
@@ -69,6 +70,21 @@ def delete_proposition(idx: int, propositions: list[proposition.Proposition]):
         del propositions[to_del]
 
 
+def random_question(tokens: list[str], questions: list[question.Question]):
+    """Prints a random question."""
+    to_select = questions
+    unanswered = 'unanswered' in tokens
+
+    if unanswered:
+        to_select = [x for x in to_select if not x.is_answered()]
+
+    if len(to_select) == 0:
+        print('No questions to select.')
+    else:
+        random_choice = random.choice(to_select)
+        print(f'{random_choice.id} {random_choice.text}')
+
+
 def parse_command(line: str, propositions: list[proposition.Proposition], questions: list[question.Question]):
     """Dispatches commands."""
     tokens = line.split()
@@ -77,6 +93,7 @@ def parse_command(line: str, propositions: list[proposition.Proposition], questi
     elif tokens[0] == 'new':
         if len(tokens) == 1:
             print('Must provide an argument to new: proposition or question')
+            return
         elif tokens[1] == 'proposition':
             new_proposition(propositions)
         elif tokens[1] == 'question':
@@ -91,8 +108,10 @@ def parse_command(line: str, propositions: list[proposition.Proposition], questi
     elif tokens[0] == 'delete':
         if len(tokens) == 1:
             print('Must provide argument: proposition or question')
+            return
         elif len(tokens) == 2:
             print('Which?')
+            return
 
         try:
             idx = int(tokens[2])
@@ -104,7 +123,19 @@ def parse_command(line: str, propositions: list[proposition.Proposition], questi
             delete_proposition(idx, propositions)
         elif tokens[1] == 'question':
             delete_question(idx, questions)
-
+    elif tokens[0] == 'random':
+        if len(tokens) == 1:
+            print('Random what? (proposition or question)')
+            return
+        random_type = tokens[1]
+        if random_type == 'proposition':
+            if len(propositions) == 0:
+                print('No propositions from which to select.')
+            else:
+                random_proposition = random.choice(propositions)
+                print(f'{random_proposition.id}: {random_proposition.text}')
+        elif random_type == 'question':
+            random_question(tokens[2:])
 
 
 def main():
@@ -121,6 +152,7 @@ def main():
             parse_command(line, propositions, questions)
 
     write_json_userdata(DATA_FILE_NAME, propositions, questions)
+
 
 if __name__ == '__main__':
     main()
