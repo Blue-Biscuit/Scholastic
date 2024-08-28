@@ -1,0 +1,11 @@
+{
+  "startup_code": [
+    "print A random unanswered question:",
+    "random question unanswered",
+    "print",
+    "print Two random propositions, try to draw a conclusion:",
+    "random proposition",
+    "random proposition",
+    "print"
+  ]
+}

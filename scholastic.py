@@ -6,9 +6,6 @@ import random
 
 DATA_FILE_NAME = 'user_data.json'
 
-def do_startup():
-    print('Scholastic. 2024.')
-    print()
 
 
 def load_json_userdata(filename: str) -> (list[proposition.Proposition], list[question.Question]):
@@ -136,11 +133,28 @@ def parse_command(line: str, propositions: list[proposition.Proposition], questi
                 print(f'{random_proposition.id}: {random_proposition.text}')
         elif random_type == 'question':
             random_question(tokens[2:], questions)
+    elif tokens[0] == 'print':
+        print(' '.join(tokens[1:]))
+
+
+def run_startup_code(config: dict, propositions: list[proposition.Proposition], questions: list[question.Question]):
+    startup = config['startup_code']
+    for line in startup:
+        parse_command(line, propositions, questions)
+
+
+def do_startup(config: dict, propositions: list, questions: list):
+    print('Scholastic. 2024.')
+    print()
+    run_startup_code(config, propositions, questions)
 
 
 def main():
     propositions, questions = load_json_userdata(DATA_FILE_NAME)
-    do_startup()
+    with open('config.json', 'r') as c_f:
+        config = json.load(c_f)
+
+    do_startup(config, propositions, questions)
 
     running = True
     while running:
