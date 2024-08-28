@@ -82,6 +82,21 @@ def random_question(tokens: list[str], questions: list[question.Question]):
         print(f'{random_choice.id} {random_choice.text}')
 
 
+def answer_question(idx: int, questions: list):
+    """Answer question wizard."""
+    chosen_q = None
+    for i, q in enumerate(questions):
+        if q.id == idx:
+            chosen_q = q
+    if chosen_q is None:
+        print('Invalid id.')
+        return
+
+    answer = input('answer (empty to quit) >> ')
+    if answer != '':
+        chosen_q.answer = answer
+
+
 def parse_command(line: str, propositions: list[proposition.Proposition], questions: list[question.Question]):
     """Dispatches commands."""
     tokens = line.split()
@@ -135,6 +150,17 @@ def parse_command(line: str, propositions: list[proposition.Proposition], questi
             random_question(tokens[2:], questions)
     elif tokens[0] == 'print':
         print(' '.join(tokens[1:]))
+    elif tokens[0] == 'answer':
+        if len(tokens) == 1:
+            print('Must specify a question number')
+            return
+        try:
+            idx = int(tokens[1])
+        except ValueError:
+            print('Must specify an integer index.')
+            return
+
+        answer_question(idx, questions)
 
 
 def run_startup_code(config: dict, propositions: list[proposition.Proposition], questions: list[question.Question]):
