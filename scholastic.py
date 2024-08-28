@@ -135,7 +135,7 @@ def parse_command(line: str, propositions: list[proposition.Proposition], questi
                 random_proposition = random.choice(propositions)
                 print(f'{random_proposition.id}: {random_proposition.text}')
         elif random_type == 'question':
-            random_question(tokens[2:])
+            random_question(tokens[2:], questions)
 
 
 def main():
